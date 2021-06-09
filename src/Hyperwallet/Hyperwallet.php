@@ -139,7 +139,7 @@ class Hyperwallet {
      */
     public function listUsers($options = array()) {
         if (!empty($options)) {
-            $filteredArr = array_diff_key($options, array_flip(User::FILTERS_ARRAY()));
+            $filteredArr = array_diff_key($options, array_flip(User::VALID_OPTIONS));
             if (!empty($filteredArr)) {
                 throw new HyperwalletArgumentException('Invalid filter');
             }
