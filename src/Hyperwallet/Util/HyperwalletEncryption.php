@@ -159,8 +159,9 @@ class HyperwalletEncryption {
         $privateJweKey = $this->getPrivateJweKey();
 
         try {
-            $encAlgorithmManager = new AlgorithmManager([new RSAOAEP256(), new A256CBCHS512()]);
-            $jweDecrypter = new JWEDecrypter($encAlgorithmManager, null);
+            $keyEncryptionAlgorithmManager = new AlgorithmManager([new RSAOAEP256()]);
+            $contentEncryptionAlgorithmManager = new AlgorithmManager([new A256CBCHS512()]);
+            $jweDecrypter = new JWEDecrypter($keyEncryptionAlgorithmManager, $contentEncryptionAlgorithmManager);
             $jweSerializer = new JWECompactSerializer();
             $jwe = $jweSerializer->unserialize($body);
             if (!$jweDecrypter->decryptUsingKey($jwe, $privateJweKey, 0)) {
