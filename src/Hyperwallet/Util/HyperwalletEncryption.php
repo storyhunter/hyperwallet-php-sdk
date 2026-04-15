@@ -78,6 +78,27 @@ class HyperwalletEncryption {
     private $jweKid;
 
     /**
+     * Supported JWS signature algorithms
+     *
+     * @var string[]
+     */
+    private static $supportedSignAlgorithms = ['RS256'];
+
+    /**
+     * Supported JWE key encryption algorithms
+     *
+     * @var string[]
+     */
+    private static $supportedEncryptionAlgorithms = ['RSA-OAEP-256'];
+
+    /**
+     * Supported JWE content encryption methods
+     *
+     * @var string[]
+     */
+    private static $supportedEncryptionMethods = ['A256CBC-HS512'];
+
+    /**
      * Creates a instance of the HyperwalletEncryption
      *
      * @param string $clientPrivateKeySetLocation String that can be a URL or path to file with client JWK set
@@ -86,6 +107,8 @@ class HyperwalletEncryption {
      * @param string $signAlgorithm JWS signature algorithm, by default value = RS256
      * @param string $encryptionMethod JWE encryption method, by default value = A256CBC-HS512
      * @param integer $jwsExpirationMinutes Minutes when JWS signature is valid, by default value = 5
+     *
+     * @throws HyperwalletException
      */
     public function __construct(
         $clientPrivateKeySetLocation,
@@ -95,6 +118,22 @@ class HyperwalletEncryption {
         $encryptionMethod = 'A256CBC-HS512',
         $jwsExpirationMinutes = 5
     ) {
+        if (!in_array($signAlgorithm, self::$supportedSignAlgorithms, true)) {
+            throw new HyperwalletException(
+                'Unsupported sign algorithm: ' . $signAlgorithm . '. Supported values: ' . implode(', ', self::$supportedSignAlgorithms)
+            );
+        }
+        if (!in_array($encryptionAlgorithm, self::$supportedEncryptionAlgorithms, true)) {
+            throw new HyperwalletException(
+                'Unsupported encryption algorithm: ' . $encryptionAlgorithm . '. Supported values: ' . implode(', ', self::$supportedEncryptionAlgorithms)
+            );
+        }
+        if (!in_array($encryptionMethod, self::$supportedEncryptionMethods, true)) {
+            throw new HyperwalletException(
+                'Unsupported encryption method: ' . $encryptionMethod . '. Supported values: ' . implode(', ', self::$supportedEncryptionMethods)
+            );
+        }
+
         $this->clientPrivateKeySetLocation = $clientPrivateKeySetLocation;
         $this->hyperwalletKeySetLocation = $hyperwalletKeySetLocation;
         $this->encryptionAlgorithm = $encryptionAlgorithm;
@@ -116,7 +155,11 @@ class HyperwalletEncryption {
 
         $algorithmManager = new AlgorithmManager([new RS256()]);
         $jwsBuilder = new JWSBuilder($algorithmManager);
-        $payload = json_encode($body);
+        try {
+            $payload = json_encode($body, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            throw new HyperwalletException('Failed to encode request body: ' . $e->getMessage());
+        }
         $jws = $jwsBuilder
             ->create()
             ->withPayload($payload)

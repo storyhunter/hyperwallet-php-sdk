@@ -95,15 +95,13 @@ class HyperwalletEncryptionTest extends \PHPUnit\Framework\TestCase {
         // Setup data
         $clientPath = __DIR__ . "/../../../resources/private-jwkset1";
         $hyperwalletPath = __DIR__ . "/../../../resources/public-jwkset1";
-        $originalMessage = "Test message";
-        $encryption = new HyperwalletEncryption($clientPath, $hyperwalletPath, 'unsupported_encryption_algorithm');
 
         // Execute test
         try {
-            $encryption->encrypt($originalMessage);
+            new HyperwalletEncryption($clientPath, $hyperwalletPath, 'unsupported_encryption_algorithm');
             $this->fail('Exception expected');
-        } catch (\Exception $e) {
-            $this->assertEquals('JWK set doesn\'t contain key with algorithm = unsupported_encryption_algorithm', $e->getMessage());
+        } catch (HyperwalletException $e) {
+            $this->assertEquals('Unsupported encryption algorithm: unsupported_encryption_algorithm. Supported values: RSA-OAEP-256', $e->getMessage());
         }
     }
 
