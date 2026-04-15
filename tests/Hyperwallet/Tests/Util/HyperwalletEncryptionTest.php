@@ -18,7 +18,22 @@ class HyperwalletEncryptionTest extends \PHPUnit\Framework\TestCase {
         $decryptedMessage = $encryption->decrypt($encryptedMessage);
 
         // Validate result
-        $this->assertEquals($originalMessage, $decryptedMessage['scalar']);
+        $this->assertEquals($originalMessage, $decryptedMessage);
+    }
+
+    public function testShouldSuccessfullyEncryptAndDecryptArrayMessage() {
+        // Setup data
+        $clientPath = __DIR__ . "/../../../resources/private-jwkset1";
+        $hyperwalletPath = __DIR__ . "/../../../resources/public-jwkset1";
+        $originalMessage = array('test' => 'value', 'key2' => 'value2');
+        $encryption = new HyperwalletEncryption($clientPath, $hyperwalletPath);
+        $encryptedMessage = $encryption->encrypt($originalMessage);
+
+        // Execute test
+        $decryptedMessage = $encryption->decrypt($encryptedMessage);
+
+        // Validate result
+        $this->assertEquals($originalMessage, $decryptedMessage);
     }
 
     public function testShouldFailDecryptionWhenWrongPrivateKeyIsUsed() {
@@ -37,10 +52,7 @@ class HyperwalletEncryptionTest extends \PHPUnit\Framework\TestCase {
             $encryption2->decrypt($encryptedMessage);
             $this->fail('Exception expected');
         } catch (\Exception $e) {
-            $this->assertThat($e->getMessage(), $this->logicalOr(
-                $this->equalTo('Decryption error'),
-                $this->equalTo('Ciphertext representative out of range')
-            ));
+            $this->assertEquals('Decryption error', $e->getMessage());
         }
     }
 
@@ -103,12 +115,11 @@ class HyperwalletEncryptionTest extends \PHPUnit\Framework\TestCase {
         );
         $clientPath = __DIR__ . "/../../../resources/private-jwkset1";
         $hyperwalletPath = __DIR__ . "/../../../resources/public-jwkset1";
-        $originalMessage = "Test message";
         $encryption = new HyperwalletEncryption($clientPath, $hyperwalletPath);
 
         // Execute test
         try {
-            $encryptedMessage = $encryption->checkJwsExpiration($header);
+            $encryption->checkJwsExpiration($header);
             $this->fail('HyperwalletException expected');
         } catch (HyperwalletException $e) {
             $this->assertEquals('While trying to verify JWS signature no [exp] header is found', $e->getMessage());
@@ -124,12 +135,11 @@ class HyperwalletEncryptionTest extends \PHPUnit\Framework\TestCase {
         );
         $clientPath = __DIR__ . "/../../../resources/private-jwkset1";
         $hyperwalletPath = __DIR__ . "/../../../resources/public-jwkset1";
-        $originalMessage = "Test message";
         $encryption = new HyperwalletEncryption($clientPath, $hyperwalletPath);
 
         // Execute test
         try {
-            $encryptedMessage = $encryption->checkJwsExpiration($header);
+            $encryption->checkJwsExpiration($header);
             $this->fail('HyperwalletException expected');
         } catch (HyperwalletException $e) {
             $this->assertEquals('Wrong value in [exp] header of JWS signature, must be integer', $e->getMessage());
@@ -145,12 +155,11 @@ class HyperwalletEncryptionTest extends \PHPUnit\Framework\TestCase {
         );
         $clientPath = __DIR__ . "/../../../resources/private-jwkset1";
         $hyperwalletPath = __DIR__ . "/../../../resources/public-jwkset1";
-        $originalMessage = "Test message";
         $encryption = new HyperwalletEncryption($clientPath, $hyperwalletPath);
 
         // Execute test
         try {
-            $encryptedMessage = $encryption->checkJwsExpiration($header);
+            $encryption->checkJwsExpiration($header);
             $this->fail('HyperwalletException expected');
         } catch (HyperwalletException $e) {
             $this->assertEquals('JWS signature has expired, checked by [exp] JWS header', $e->getMessage());

@@ -40,7 +40,7 @@ class ErrorResponse implements \Countable, \ArrayAccess {
     public function __construct($statusCode, array $errors) {
         $this->statusCode = $statusCode;
         $this->errors = array_map(function ($error) {
-            if (!isset($relatedResources) && isset($error['relatedResources'])) {
+            if (!isset($this->relatedResources) && isset($error['relatedResources'])) {
                 $this->relatedResources = $error['relatedResources'];
             }
             return new Error($error);
