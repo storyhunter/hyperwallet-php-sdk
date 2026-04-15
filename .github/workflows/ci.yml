@@ -23,7 +23,7 @@ jobs:
       fail-fast: false
       matrix:
         operating-system: ['ubuntu-latest']
-        php-versions: ['8.1', '8.2', '8.3', '8.4']
+        php-versions: ['8.1', '8.2', '8.3', '8.4', '8.5']
 
     steps:
       - uses: actions/checkout@v4
@@ -43,7 +43,7 @@ jobs:
       - name: Run test suite
         run: |
           php --version
-          ./vendor/bin/phpunit -v
+          ./vendor/bin/phpunit
 
   code-coverage:
     name: Report code coverage
@@ -72,7 +72,7 @@ jobs:
       - name: Run test suite
         run: |
           php --version
-          ./vendor/bin/phpunit -v
+          ./vendor/bin/phpunit
 
       - name: Upload coverage results to Coveralls
         env:

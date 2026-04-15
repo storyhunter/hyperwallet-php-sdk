@@ -87,9 +87,14 @@ class HyperwalletEncryption {
      * @param string $encryptionMethod JWE encryption method, by default value = A256CBC-HS512
      * @param integer $jwsExpirationMinutes Minutes when JWS signature is valid, by default value = 5
      */
-    public function __construct($clientPrivateKeySetLocation, $hyperwalletKeySetLocation,
-                $encryptionAlgorithm = 'RSA-OAEP-256', $signAlgorithm = 'RS256', $encryptionMethod = 'A256CBC-HS512',
-                $jwsExpirationMinutes = 5) {
+    public function __construct(
+        $clientPrivateKeySetLocation,
+        $hyperwalletKeySetLocation,
+        $encryptionAlgorithm = 'RSA-OAEP-256',
+        $signAlgorithm = 'RS256',
+        $encryptionMethod = 'A256CBC-HS512',
+        $jwsExpirationMinutes = 5
+    ) {
         $this->clientPrivateKeySetLocation = $clientPrivateKeySetLocation;
         $this->hyperwalletKeySetLocation = $hyperwalletKeySetLocation;
         $this->encryptionAlgorithm = $encryptionAlgorithm;
