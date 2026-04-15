@@ -151,7 +151,7 @@ class HyperwalletEncryption {
      * Decrypts encrypted response : 1) decrypts the request body; 2) verifies the payload signature
      *
      * @param string $body The response body to be decrypted
-     * @return array
+     * @return mixed
      *
      * @throws HyperwalletException
      */
