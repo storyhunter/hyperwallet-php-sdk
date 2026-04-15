@@ -186,7 +186,11 @@ class HyperwalletEncryption {
             throw new HyperwalletException('Signature verification failed');
         }
 
-        return json_decode($jws->getPayload(), true);
+        try {
+            return json_decode($jws->getPayload(), true, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            throw new HyperwalletException('Failed to decode decrypted payload: ' . $e->getMessage());
+        }
     }
 
     /**
