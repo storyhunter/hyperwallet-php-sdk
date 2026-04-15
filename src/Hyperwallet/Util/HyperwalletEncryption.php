@@ -130,8 +130,9 @@ class HyperwalletEncryption {
         $jwsToken = $jwsSerializer->serialize($jws, 0);
 
         $publicJweKey = $this->getPublicJweKey();
-        $encAlgorithmManager = new AlgorithmManager([new RSAOAEP256(), new A256CBCHS512()]);
-        $jweBuilder = new JWEBuilder($encAlgorithmManager);
+        $keyEncryptionAlgorithmManager = new AlgorithmManager([new RSAOAEP256()]);
+        $contentEncryptionAlgorithmManager = new AlgorithmManager([new A256CBCHS512()]);
+        $jweBuilder = new JWEBuilder($keyEncryptionAlgorithmManager, $contentEncryptionAlgorithmManager);
         $jwe = $jweBuilder
             ->create()
             ->withPayload($jwsToken)
